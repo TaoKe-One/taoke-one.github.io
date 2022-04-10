@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/bg/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="William Tao">
+  <meta name="keywords" content="websafe">
+  
+    <meta name="description" content="暴力破解字典弱口令社工库指定生成的密码指定的意识 漏洞详解概述“暴力破解”是一攻击具手段，在web攻击中，一般会使用这种手段对应用系统的认证信息进行获取。 其过程就是使用大量的认证信息在认证接口进行尝试登录，直到得到正确的结果。 为了提高效率，暴力破解一般会使用带有字典的工具来进行自动化操作。 理论上来说，大多数系统都是可以被暴力破解的，只要攻击者有足够强大的计算能力和时间，所以断定一个系统是否存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="暴力破解">
+<meta property="og:url" content="http://example.com/2022/01/10/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/index.html">
+<meta property="og:site_name" content="taoke-one 博客">
+<meta property="og:description" content="暴力破解字典弱口令社工库指定生成的密码指定的意识 漏洞详解概述“暴力破解”是一攻击具手段，在web攻击中，一般会使用这种手段对应用系统的认证信息进行获取。 其过程就是使用大量的认证信息在认证接口进行尝试登录，直到得到正确的结果。 为了提高效率，暴力破解一般会使用带有字典的工具来进行自动化操作。 理论上来说，大多数系统都是可以被暴力破解的，只要攻击者有足够强大的计算能力和时间，所以断定一个系统是否存">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315112958271.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315113028355.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315113332185.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171135345.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315114159489.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315114311858.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171224071.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171322956.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171606228.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171756850.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164225467.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164308513.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164418274.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164551545.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164608913.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164721973.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165027446.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165050973.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165203810.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165354510.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316170751968.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316171217544.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316171502911.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164551545.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164608913.png">
+<meta property="og:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164721973.png">
+<meta property="article:published_time" content="2022-01-10T13:33:59.000Z">
+<meta property="article:modified_time" content="2022-04-10T13:38:54.166Z">
+<meta property="article:author" content="William Tao">
+<meta property="article:tag" content="websafe">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315112958271.png">
+  
+  
+  <title>暴力破解 - taoke-one 博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>导航</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="暴力破解">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-01-10 21:33" pubdate>
+        2022年1月10日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">暴力破解</h1>
+            
+            <div class="markdown-body">
+              <h1 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h1><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><h3 id="弱口令"><a href="#弱口令" class="headerlink" title="弱口令"></a>弱口令</h3><h3 id="社工库"><a href="#社工库" class="headerlink" title="社工库"></a>社工库</h3><h3 id="指定生成的密码"><a href="#指定生成的密码" class="headerlink" title="指定生成的密码"></a>指定生成的密码</h3><p>指定的意识</p>
+<h2 id="漏洞详解"><a href="#漏洞详解" class="headerlink" title="漏洞详解"></a>漏洞详解</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>“<strong>暴力破解</strong>”是一攻击具手段，在web攻击中，一般会使用这种手段对应用系统的认证信息进行获取。 其过程就是使用大量的认证信息在认证接口进行尝试登录，直到得到正确的结果。 为了提高效率，暴力破解一般会使用带有字典的工具来进行自动化操作。</p>
+<p>理论上来说，大多数系统都是可以被暴力破解的，只要攻击者有足够强大的计算能力和时间，所以断定一个系统是否存在暴力破解漏洞，其条件也不是绝对的。 我们说一个web应用系统存在暴力破解漏洞，一般是指该web应用系统没有采用或者采用了比较弱的认证安全策略，导致其被暴力破解的“可能性”变的比较高。 这里的认证安全策略, 包括：</p>
+<p>1.是否要求用户设置复杂的密码；<br>2.是否每次认证都使用安全的验证码（想想你买火车票时输的验证码～）或者手机otp；<br>3.是否对尝试登录的行为进行判断和限制（如：连续5次错误登录，进行账号锁定或IP地址锁定等）；<br>4.是否采用了双因素认证；<br>…等等。<br>千万不要小看暴力破解漏洞,往往这种简单粗暴的攻击方式带来的效果是超出预期的!</p>
+<p>你可以通过“BurteForce”对应的测试栏目，来进一步的了解该漏洞。</p>
+<p>注册的时候是否要求用户设置复杂的密码</p>
+<p>是否每次认证都使用安全的验证码</p>
+<p>是否对尝试登录行为进行判断和限制</p>
+<p>是否在必要的情况下采用了双因素验证。。。。</p>
+<p>存在暴力破解漏洞的王网站可能会遭受暴力破解攻击，但该暴力破解攻击<strong>成功</strong>的可能性并不是100%，所以有些网站即虽然存在暴力破解漏洞，但其管理员可能会忽略它的危害。</p>
+<p>暴力破解属于猜测行为。</p>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><h4 id="1-确认登录接口的脆弱性"><a href="#1-确认登录接口的脆弱性" class="headerlink" title="1.确认登录接口的脆弱性"></a>1.确认登录接口的脆弱性</h4><p>确定目标是否存在暴力破解的漏洞。（确认被暴力破解的“可能性”）</p>
+<p>比如：尝试登录的抓包—观察验证元素和response信息，判断是否存在被暴力破解的可能性。</p>
+<h4 id="2-对字典进行优化"><a href="#2-对字典进行优化" class="headerlink" title="2.对字典进行优化"></a>2.对字典进行优化</h4><p>根据实际的情况对字典进行优化，提高爆破过程中的效率。</p>
+<h4 id="3-工具自动化操作"><a href="#3-工具自动化操作" class="headerlink" title="3.工具自动化操作"></a>3.工具自动化操作</h4><p>配置自动化工具（线程，超时时间，重试次数等）进行自动化操作。</p>
+<h3 id="技巧–字典优化技巧"><a href="#技巧–字典优化技巧" class="headerlink" title="技巧–字典优化技巧"></a>技巧–字典优化技巧</h3><h4 id="技巧1"><a href="#技巧1" class="headerlink" title="技巧1."></a>技巧1.</h4><p>根据注册提示信息进行优化，对目标站点进行注册，搞清楚账号密码的一些限制，比如目标站点要求密码必须是6位以上，字母数字组合，则可以按照此优化字典，比如去掉不符合要求的密码。</p>
+<h4 id="技巧2"><a href="#技巧2" class="headerlink" title="技巧2."></a>技巧2.</h4><p>如果破解的是管理后台，往往这种系统的管理员是admin&#x2F;administratoa&#x2F;root的纪律比较高，可以使用者三个账号+随便一个密码，尝试登录，观看返回的结果，确定用户名。比如：输入XXX&#x2F;YYY返回“用户名或密码错误” 、输入admin&#x2F;yyyy返回“密码错误”，则基本可以确定用户名是admin； 因此可以至对密码进行爆破即可，提高效率。</p>
+<h2 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h2><p>实验环境：phpstudy+PHP 5.5.38+Nginx1.15+mysql5.7.27</p>
+<p>实验目标：pikachu靶场-暴力破解</p>
+<p>测试工具：Burpsuite + Chrome</p>
+<h3 id="实验1—基于表单的暴力破解"><a href="#实验1—基于表单的暴力破解" class="headerlink" title="实验1—基于表单的暴力破解"></a>实验1—基于表单的暴力破解</h3><p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315112958271.png" srcset="/img/loading.gif" lazyload alt="image-20220315112958271"></p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315113028355.png" srcset="/img/loading.gif" lazyload alt="image-20220315113028355"></p>
+<p>测试：</p>
+<p>进行对表单进行测试：admin&#x2F;admin,抓包查看请求包</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315113332185.png" srcset="/img/loading.gif" lazyload alt="image-20220315113332185"></p>
+<p>将发送的post请求包至Intruder(专门用于多线程尝试的工具)</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171135345.png" srcset="/img/loading.gif" lazyload alt="image-20220315171135345"></p>
+<p>转到Positions下，对你需要的多次提交的参数进行加$$(右边的add)完成后加入你的payload，如果你不知道怎么构造密码。点击页面上的提示，告诉你这个有哪些用户。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315114159489.png" srcset="/img/loading.gif" lazyload alt="image-20220315114159489"></p>
+<p>需要修改的:</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315114311858.png" srcset="/img/loading.gif" lazyload alt="image-20220315114311858"></p>
+<p>user的payload</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171224071.png" srcset="/img/loading.gif" lazyload alt="image-20220315171224071"></p>
+<p>password的payload</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171322956.png" srcset="/img/loading.gif" lazyload alt="image-20220315171322956"></p>
+<p>start attcak，开始攻击。</p>
+<p>攻击完成后，查看你的结果的response的数据包长度，进行排序。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171606228.png" srcset="/img/loading.gif" lazyload alt="image-20220315171606228"></p>
+<p>三个账号密码都已经碰撞出来，分别是：admin&#x2F;123456 ，pikachu&#x2F;000000 ，test&#x2F;abc123</p>
+<p>尝试登录，登录成功。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220315171756850.png" srcset="/img/loading.gif" lazyload alt="image-20220315171756850"></p>
+<p>完成。</p>
+<h3 id="实验2–验证码绕过（on-server"><a href="#实验2–验证码绕过（on-server" class="headerlink" title="实验2–验证码绕过（on server)"></a>实验2–验证码绕过（on server)</h3><p>![image-20220315172248815](&#x2F;C:&#x2F;Users&#x2F;William Tao&#x2F;AppData&#x2F;Roaming&#x2F;Typora&#x2F;typora-user-images..&#x2F;暴力破解&#x2F;image-20220315172248815.png)</p>
+<p>此处的密码依然还是实验1的三个账号密码，但是是需要验证码登录，此漏洞出现的原因是在服务端的生成验证码的在服务器的缓存时间比较长导致的，一般是5分钟，15分钟（多数）。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164225467.png" srcset="/img/loading.gif" lazyload alt="image-20220316164225467"></p>
+<p>登录进行抓包</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164308513.png" srcset="/img/loading.gif" lazyload alt="image-20220316164308513"></p>
+<p>发送到Intruder</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164418274.png" srcset="/img/loading.gif" lazyload alt="image-20220316164418274"></p>
+<p>把username和password加入到payload，使用ClusterBomb，进行爆破。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164551545.png" srcset="/img/loading.gif" lazyload alt="image-20220316164551545"></p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164608913.png" srcset="/img/loading.gif" lazyload alt="image-20220316164608913"></p>
+<p>将payload的设置好后进行攻击。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164721973.png" srcset="/img/loading.gif" lazyload alt="image-20220316164721973"></p>
+<p>攻击完成后，对长度进行排序，最上面的几个就是账号密码获取成功。</p>
+<h3 id="实验3–验证码绕过（on-client"><a href="#实验3–验证码绕过（on-client" class="headerlink" title="实验3–验证码绕过（on client)"></a>实验3–验证码绕过（on client)</h3><p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165027446.png" srcset="/img/loading.gif" lazyload alt="image-20220316165027446"></p>
+<h4 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h4><p>我们点击提示，发现叫我们查看前端代码，查看一下。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165050973.png" srcset="/img/loading.gif" lazyload alt="image-20220316165050973"></p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165203810.png" srcset="/img/loading.gif" lazyload alt="image-20220316165203810"></p>
+<p>发现验证码是通过createCode（）的函数进行控制的。我们看一下js代码。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316165354510.png" srcset="/img/loading.gif" lazyload alt="image-20220316165354510"></p>
+<p>正如提示所说，验证码是由前端代码控制的。所以我们只需加载页面的时候去掉js加载。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316170751968.png" srcset="/img/loading.gif" lazyload alt="image-20220316170751968"></p>
+<p>刷新网页，进行抓包。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316171217544.png" srcset="/img/loading.gif" lazyload alt="image-20220316171217544"></p>
+<p>将抓到的包发送到Intruder，加入需要碰撞的参数。</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316171502911.png" srcset="/img/loading.gif" lazyload alt="image-20220316171502911"></p>
+<p>设置payload进行爆破</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164551545.png" srcset="/img/loading.gif" lazyload alt="image-20220316164551545"></p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164608913.png" srcset="/img/loading.gif" lazyload alt="image-20220316164608913"></p>
+<p>开始攻击</p>
+<p><img src="/../%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/image-20220316164721973.png" srcset="/img/loading.gif" lazyload alt="image-20220316164721973"></p>
+<p>进行长度排序，成功的账号密码爆破成功。</p>
+<h4 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h4><p>由于验证码只在前端控制，我们可以直接不填写验证码，直接进行爆破。也是最简单的方法，和实验1一样。由于此处的验证码不起作用。直接爆破。最终也一样可以爆破成功。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/04/10/%E5%88%9D%E9%83%A8%E7%BD%B2hexo/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">初部署hexo</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

